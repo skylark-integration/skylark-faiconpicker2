@@ -1,2 +1,2 @@
 # skylark-utils-icons
-The skylark icons utility library
+The skylark icon picker widget
