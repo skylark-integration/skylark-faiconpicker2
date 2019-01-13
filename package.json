@@ -1,0 +1,34 @@
+{
+  "name": "skylark-ui-iconpicker",
+  "description": "The skylark color picker widget",
+  "version": "0.9.0",
+  "keywords": [
+    "skylark",
+    "ui",
+    "iconpicker",
+    "fontawson",
+    "fonticon"
+  ],
+  "homepage": "https://github.com/skylarkui/skylark-ui-iconpicker/",
+  "author": "Hudaokeji, Inc.",
+  "scripts": {
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/skylarkui/skylark-ui-iconpicker.git"
+  },
+  "bugs": {
+    "url": "https://github.com/skylarkui/skylark-ui-iconpicker/issues"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "skylark-langx": "https://github.com/skylarklangx/skylark-langx#master",
+    "skylark-utils-dom": "https://github.com/skylarkutils/skylark-utils-dom#master",
+    "skylark-utils-color": "https://github.com/skylarkutils/skylark-utils-color#master",
+    "skylark-utils-interact": "https://github.com/skylarkutils/skylark-utils-interact#master",
+    "skylark-ui-swt": "https://github.com/skylarkui/skylark-ui-swt#master"
+  },
+  "engines": {
+    "node": ">=0.10.1"
+  }
+}

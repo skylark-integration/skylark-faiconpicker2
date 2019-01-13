@@ -1,2 +1,2 @@
 # skylark-ui-iconer
-The skylark icon picker widget
+The skylark icon picker widget,in development.
