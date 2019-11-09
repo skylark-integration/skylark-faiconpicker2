@@ -1,0 +1,1 @@
+{"version":3,"sources":["main.js"],"names":["define","IconPicker"],"mappings":";;;;;;;AAAAA,QACC,gBACC,SAASC,GACV,OAAOA","file":"../main.js","sourcesContent":["define([\r\n\t\"./IconPicker\"\r\n],function(IconPicker){\r\n\treturn IconPicker;\r\n});"]}

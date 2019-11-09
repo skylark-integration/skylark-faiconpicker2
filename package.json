@@ -1,6 +1,6 @@
 {
-  "name": "skylark-ui-iconpicker",
-  "description": "The skylark color picker widget",
+  "name": "skylark-widgets-iconpicker",
+  "description": "The skylark icon picker widget",
   "version": "0.9.0",
   "keywords": [
     "skylark",
@@ -9,24 +9,23 @@
     "fontawson",
     "fonticon"
   ],
-  "homepage": "https://github.com/skylarkui/skylark-ui-iconpicker/",
+  "homepage": "https://github.com/skylark-widgets/skylark-widgets-iconpicker/",
   "author": "Hudaokeji, Inc.",
   "scripts": {
+    "build": "sbundle build ."
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/skylarkui/skylark-ui-iconpicker.git"
+    "url": "https://github.com/skylark-widgets/skylark-widgets-iconpicker.git"
   },
   "bugs": {
-    "url": "https://github.com/skylarkui/skylark-ui-iconpicker/issues"
+    "url": "https://github.com/skylark-widgets/skylark-widgets-iconpicker/issues"
   },
   "license": "MIT",
-  "devDependencies": {
+  "dependencies": {
     "skylark-langx": "https://github.com/skylarklangx/skylark-langx#master",
-    "skylark-utils-dom": "https://github.com/skylarkutils/skylark-utils-dom#master",
-    "skylark-utils-color": "https://github.com/skylarkutils/skylark-utils-color#master",
-    "skylark-utils-interact": "https://github.com/skylarkutils/skylark-utils-interact#master",
-    "skylark-ui-swt": "https://github.com/skylarkui/skylark-ui-swt#master"
+    "skylark-widgets-base": "https://github.com/skylark-widgets/skylark-widgets-base#master",
+    "skylark-widgets-swt": "https://github.com/skylark-widgets/skylark-widgets-swt#master"
   },
   "engines": {
     "node": ">=0.10.1"
