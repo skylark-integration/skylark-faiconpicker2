@@ -2527,7 +2527,7 @@ define('skylark-langx/Deferred',[
 ],function(Deferred){
     return Deferred;
 });
-define('skylark-langx-emitter/Evented',[
+define('skylark-langx-emitter/Emitter',[
   "skylark-langx-ns/ns",
   "skylark-langx-types",
   "skylark-langx-objects",
@@ -2541,7 +2541,8 @@ define('skylark-langx-emitter/Evented',[
         isFunction = types.isFunction,
         isString = types.isString,
         isEmptyObject = types.isEmptyObject,
-        mixin = objects.mixin;
+        mixin = objects.mixin,
+        safeMixin = objects.safeMixin;
 
     function parse(event) {
         var segs = ("" + event).split(".");
@@ -2551,7 +2552,7 @@ define('skylark-langx-emitter/Evented',[
         };
     }
 
-    var Evented = klass({
+    var Emitter = klass({
         on: function(events, selector, data, callback, ctx, /*used internally*/ one) {
             var self = this,
                 _hub = this._hub || (this._hub = {});
@@ -2603,7 +2604,7 @@ define('skylark-langx-emitter/Evented',[
             return this.on(events, selector, data, callback, ctx, 1);
         },
 
-        trigger: function(e /*,argument list*/ ) {
+        emit: function(e /*,argument list*/ ) {
             if (!this._hub) {
                 return this;
             }
@@ -2807,16 +2808,35 @@ define('skylark-langx-emitter/Evented',[
         }
     });
 
-    return skylark.attach("langx.Evented",Evented);
+    Emitter.prototype.trigger = Emitter.prototype.emit;
+
+    Emitter.createEvent = function (type,props) {
+        var e = new CustomEvent(type,props);
+        return safeMixin(e, props);
+    };
+
+    return skylark.attach("langx.Emitter",Emitter);
 
 });
+define('skylark-langx-emitter/Evented',[
+  "skylark-langx-ns/ns",
+	"./Emitter"
+],function(skylark,Emitter){
+	return skylark.attach("langx.Evented",Emitter);
+});
 define('skylark-langx-emitter/main',[
+	"./Emitter",
 	"./Evented"
-],function(Evented){
-	return Evented;
+],function(Emitter){
+	return Emitter;
 });
 define('skylark-langx-emitter', ['skylark-langx-emitter/main'], function (main) { return main; });
 
+define('skylark-langx/Emitter',[
+    "skylark-langx-emitter"
+],function(Evented){
+    return Evented;
+});
 define('skylark-langx/Evented',[
     "skylark-langx-emitter"
 ],function(Evented){
@@ -3499,6 +3519,7 @@ define('skylark-langx/langx',[
     "./async",
     "./datetimes",
     "./Deferred",
+    "./Emitter",
     "./Evented",
     "./funcs",
     "./hoster",
@@ -3509,7 +3530,7 @@ define('skylark-langx/langx',[
     "./strings",
     "./topic",
     "./types"
-], function(skylark,arrays,ArrayStore,aspect,async,datetimes,Deferred,Evented,funcs,hoster,klass,numbers,objects,Stateful,strings,topic,types) {
+], function(skylark,arrays,ArrayStore,aspect,async,datetimes,Deferred,Emitter,Evented,funcs,hoster,klass,numbers,objects,Stateful,strings,topic,types) {
     "use strict";
     var toString = {}.toString,
         concat = Array.prototype.concat,
@@ -3520,13 +3541,6 @@ define('skylark-langx/langx',[
         safeMixin = objects.safeMixin,
         isFunction = types.isFunction;
 
-
-    function createEvent(type, props) {
-        var e = new CustomEvent(type, props);
-
-        return safeMixin(e, props);
-    }
-    
 
     function funcArg(context, arg, idx, payload) {
         return isFunction(arg) ? arg.call(context, idx, payload) : arg;
@@ -3565,7 +3579,7 @@ define('skylark-langx/langx',[
     }
 
     mixin(langx, {
-        createEvent : createEvent,
+        createEvent : Emitter.createEvent,
 
         funcArg: funcArg,
 
@@ -3586,6 +3600,8 @@ define('skylark-langx/langx',[
         async : async,
         
         Deferred: Deferred,
+
+        Emitter: Emitter,
 
         Evented: Evented,
 
@@ -9494,7 +9510,9 @@ define('skylark-domx-geom/main',[
     $.fn.scrollLeft = $.wraps.wrapper_value(geom.scrollLeft, geom);
 
     $.fn.position =  function(options) {
-        if (!this.length) return
+        if (!this.length) {
+            return this;
+        }
 
         if (options) {
             if (options.of && options.of.length) {
@@ -11031,7 +11049,8 @@ define('skylark-widgets-base/Widget',[
     _parse : function(elm,options) {
       var optionsAttr = datax.data(elm,"options");
       if (optionsAttr) {
-         var options1 = JSON.parse("{" + optionsAttr + "}");
+         //var options1 = JSON.parse("{" + optionsAttr + "}");
+         var options1 = eval("({" + optionsAttr + "})");
          options = langx.mixin(options1,options); 
       }
       return options || {};
@@ -11299,6 +11318,10 @@ define('skylark-widgets-base/Widget',[
       return fx.throb(this._elm,params);
     },
 
+    emit : function(type,params) {
+      var e = langx.Emitter.createEvent(type,params);
+      return langx.Emitter.prototype.emit.call(this,e);
+    },
 
     /**
      *  Attach the current widget element to dom document.
@@ -15679,18 +15702,20 @@ define('skylark-widgets-iconpicker/IconPicker',[
             }
         },
 
-        _construct : function(element, options) {
-            this.element = $(element).addClass('iconpicker-element');
+        //_construct : function(element, options) {
+        _init : function() {
+            this.$element = $(this._elm).addClass('iconpicker-element');
 
-            this.options = langx.extend(true,{}, this.options, this.element.data(), options);
+            //this.options = langx.extend(true,{}, this.options, this.element.data(), options);
             this.options.originalPlacement = this.options.placement;
+
             // Iconpicker container element
             this.container = (_helpers.isElement(this.options.container) ? $(this.options.container) : false);
             if (this.container === false) {
-                if (this.element.is('.dropdown-toggle')) {
-                    this.container = $('~ .dropdown-menu:first', this.element);
+                if (this.$element.is('.dropdown-toggle')) {
+                    this.container = $('~ .dropdown-menu:first', this.$element);
                 } else {
-                    this.container = (this.element.is('input,textarea,button,.btn') ? this.element.parent() : this.element);
+                    this.container = (this.$element.is('input,textarea,button,.btn') ? this.$element.parent() : this.$element);
                 }
             }
             this.container.addClass('iconpicker-container');
@@ -15700,7 +15725,7 @@ define('skylark-widgets-iconpicker/IconPicker',[
             }
 
             // Is the element an input? Should we search inside for any input?
-            this.input = (this.element.is('input,textarea') ? this.element.addClass('iconpicker-input') : false);
+            this.input = (this.$element.is('input,textarea') ? this.$element.addClass('iconpicker-input') : false);
             if (this.input === false) {
                 this.input = (this.container.find(this.options.input));
                 if (!this.input.is('input,textarea')) {
@@ -15791,7 +15816,7 @@ define('skylark-widgets-iconpicker/IconPicker',[
 
                 if (_self.options.mustAccept === false) {
                     _self.update($this.data('iconpickerValue'));
-                    _self.trigger('picked', {
+                    _self.emit('picked', {
                         data: _self.iconpickerValue
                     });
 
@@ -15834,7 +15859,7 @@ define('skylark-widgets-iconpicker/IconPicker',[
         _isEventInsideIconpicker: function(e) {
             var _t = $(e.target);
             if ((!_t.hasClass('iconpicker-element') ||
-                    (_t.hasClass('iconpicker-element') && !_t.is(this.element))) &&
+                    (_t.hasClass('iconpicker-element') && !_t.is(this.$element))) &&
                 (_t.parents('.iconpicker-popover').length === 0)) {
                 return false;
             }
@@ -15852,7 +15877,7 @@ define('skylark-widgets-iconpicker/IconPicker',[
 
                 _self.update(_self.iconpickerValue);
 
-                _self.trigger('picked', {
+                _self.emit('picked', {
                     data: _self.iconpickerValue
                 });
 
@@ -15866,7 +15891,7 @@ define('skylark-widgets-iconpicker/IconPicker',[
                 }
             });
 
-            this.element.on('focus.iconpicker', function(e) {
+            this.$element.on('focus.iconpicker', function(e) {
                 _self.show();
                 e.stopPropagation();
             });
@@ -15920,7 +15945,7 @@ define('skylark-widgets-iconpicker/IconPicker',[
         
         _unbindElementEvents: function() {
             this.popover.off('.iconpicker');
-            this.element.off('.iconpicker');
+            this.$element.off('.iconpicker');
 
             if (this.hasInput()) {
                 this.input.off('.iconpicker');
@@ -16202,7 +16227,7 @@ define('skylark-widgets-iconpicker/IconPicker',[
                 if (this.hasInput()) {
                     this.input.val(this.iconpickerValue);
                 } else {
-                    this.element.data('iconpickerValue', this.iconpickerValue);
+                    this.$element.data('iconpickerValue', this.iconpickerValue);
                 }
 
             }
@@ -16222,7 +16247,7 @@ define('skylark-widgets-iconpicker/IconPicker',[
             if (this.hasInput()) {
                 val = this.input.val();
             } else {
-                val = this.element.data('iconpickerValue');
+                val = this.$element.data('iconpickerValue');
             }
             if ((val === undefined) || (val === '') || (val === null) || (val === false)) {
                 // if not defined or empty, return default
@@ -16343,7 +16368,7 @@ define('skylark-widgets-iconpicker/IconPicker',[
 
             // unbinds events and resets everything to the initial state,
             // including component mode
-            this.element.removeData('iconpicker').removeData('iconpickerValue').removeClass('iconpicker-element');
+            this.$element.removeData('iconpicker').removeData('iconpickerValue').removeClass('iconpicker-element');
 
             this._unbindElementEvents();
             this._unbindWindowEvents();

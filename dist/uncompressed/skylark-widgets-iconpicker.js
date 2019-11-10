@@ -4382,18 +4382,20 @@ define('skylark-widgets-iconpicker/IconPicker',[
             }
         },
 
-        _construct : function(element, options) {
-            this.element = $(element).addClass('iconpicker-element');
+        //_construct : function(element, options) {
+        _init : function() {
+            this.$element = $(this._elm).addClass('iconpicker-element');
 
-            this.options = langx.extend(true,{}, this.options, this.element.data(), options);
+            //this.options = langx.extend(true,{}, this.options, this.element.data(), options);
             this.options.originalPlacement = this.options.placement;
+
             // Iconpicker container element
             this.container = (_helpers.isElement(this.options.container) ? $(this.options.container) : false);
             if (this.container === false) {
-                if (this.element.is('.dropdown-toggle')) {
-                    this.container = $('~ .dropdown-menu:first', this.element);
+                if (this.$element.is('.dropdown-toggle')) {
+                    this.container = $('~ .dropdown-menu:first', this.$element);
                 } else {
-                    this.container = (this.element.is('input,textarea,button,.btn') ? this.element.parent() : this.element);
+                    this.container = (this.$element.is('input,textarea,button,.btn') ? this.$element.parent() : this.$element);
                 }
             }
             this.container.addClass('iconpicker-container');
@@ -4403,7 +4405,7 @@ define('skylark-widgets-iconpicker/IconPicker',[
             }
 
             // Is the element an input? Should we search inside for any input?
-            this.input = (this.element.is('input,textarea') ? this.element.addClass('iconpicker-input') : false);
+            this.input = (this.$element.is('input,textarea') ? this.$element.addClass('iconpicker-input') : false);
             if (this.input === false) {
                 this.input = (this.container.find(this.options.input));
                 if (!this.input.is('input,textarea')) {
@@ -4494,7 +4496,7 @@ define('skylark-widgets-iconpicker/IconPicker',[
 
                 if (_self.options.mustAccept === false) {
                     _self.update($this.data('iconpickerValue'));
-                    _self.trigger('picked', {
+                    _self.emit('picked', {
                         data: _self.iconpickerValue
                     });
 
@@ -4537,7 +4539,7 @@ define('skylark-widgets-iconpicker/IconPicker',[
         _isEventInsideIconpicker: function(e) {
             var _t = $(e.target);
             if ((!_t.hasClass('iconpicker-element') ||
-                    (_t.hasClass('iconpicker-element') && !_t.is(this.element))) &&
+                    (_t.hasClass('iconpicker-element') && !_t.is(this.$element))) &&
                 (_t.parents('.iconpicker-popover').length === 0)) {
                 return false;
             }
@@ -4555,7 +4557,7 @@ define('skylark-widgets-iconpicker/IconPicker',[
 
                 _self.update(_self.iconpickerValue);
 
-                _self.trigger('picked', {
+                _self.emit('picked', {
                     data: _self.iconpickerValue
                 });
 
@@ -4569,7 +4571,7 @@ define('skylark-widgets-iconpicker/IconPicker',[
                 }
             });
 
-            this.element.on('focus.iconpicker', function(e) {
+            this.$element.on('focus.iconpicker', function(e) {
                 _self.show();
                 e.stopPropagation();
             });
@@ -4623,7 +4625,7 @@ define('skylark-widgets-iconpicker/IconPicker',[
         
         _unbindElementEvents: function() {
             this.popover.off('.iconpicker');
-            this.element.off('.iconpicker');
+            this.$element.off('.iconpicker');
 
             if (this.hasInput()) {
                 this.input.off('.iconpicker');
@@ -4905,7 +4907,7 @@ define('skylark-widgets-iconpicker/IconPicker',[
                 if (this.hasInput()) {
                     this.input.val(this.iconpickerValue);
                 } else {
-                    this.element.data('iconpickerValue', this.iconpickerValue);
+                    this.$element.data('iconpickerValue', this.iconpickerValue);
                 }
 
             }
@@ -4925,7 +4927,7 @@ define('skylark-widgets-iconpicker/IconPicker',[
             if (this.hasInput()) {
                 val = this.input.val();
             } else {
-                val = this.element.data('iconpickerValue');
+                val = this.$element.data('iconpickerValue');
             }
             if ((val === undefined) || (val === '') || (val === null) || (val === false)) {
                 // if not defined or empty, return default
@@ -5046,7 +5048,7 @@ define('skylark-widgets-iconpicker/IconPicker',[
 
             // unbinds events and resets everything to the initial state,
             // including component mode
-            this.element.removeData('iconpicker').removeData('iconpickerValue').removeClass('iconpicker-element');
+            this.$element.removeData('iconpicker').removeData('iconpickerValue').removeClass('iconpicker-element');
 
             this._unbindElementEvents();
             this._unbindWindowEvents();
