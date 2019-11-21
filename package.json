@@ -23,7 +23,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "skylark-langx": "git+https://github.com/skylarklangx/skylark-langx.git#master",
+    "skylark-langx": "git+https://github.com/skylark-langx/skylark-langx.git#master",
     "skylark-widgets-base": "git+https://github.com/skylark-widgets/skylark-widgets-base.git#master",
     "skylark-widgets-swt": "git+https://github.com/skylark-widgets/skylark-widgets-swt.git#master"
   },
