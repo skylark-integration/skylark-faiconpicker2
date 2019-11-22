@@ -5094,7 +5094,7 @@ define('skylark-widgets-iconpicker/IconPicker',[
     };
 
 
-    return skylark.attach("iwidgets.IconPicker",IconPicker);
+    return skylark.attach("widgets.IconPicker",IconPicker);
 });
 
 define('skylark-widgets-iconpicker/main',[

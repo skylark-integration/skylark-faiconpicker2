@@ -2805,10 +2805,12 @@ define('skylark-langx-emitter/Emitter',[
             }
 
             return this;
+        },
+
+        trigger  : function() {
+            return this.emit.apply(this,arguments);
         }
     });
-
-    Emitter.prototype.trigger = Emitter.prototype.emit;
 
     Emitter.createEvent = function (type,props) {
         var e = new CustomEvent(type,props);
@@ -4092,7 +4094,7 @@ define('skylark-domx-noder/noder',[
                 node.appendChild(html);
             }
 
-
+            return this;
         }
     }
 
@@ -7699,10 +7701,11 @@ define('skylark-domx-eventer/eventer',[
     return skylark.attach("domx.eventer",eventer);
 });
 define('skylark-domx-eventer/main',[
+    "skylark-langx/langx",
     "./eventer",
     "skylark-domx-velm",
     "skylark-domx-query"        
-],function(eventer,velm,$){
+],function(langx,eventer,velm,$){
 
     // from ./eventer
     velm.delegate([
@@ -11033,10 +11036,12 @@ define('skylark-widgets-base/Widget',[
 
               }
           }
-
-
         }
 
+        if (this._elm.parentElement) {
+          // The widget is already in document
+          this._startup();
+        }
 
      },
 
@@ -11319,8 +11324,10 @@ define('skylark-widgets-base/Widget',[
     },
 
     emit : function(type,params) {
-      var e = langx.Emitter.createEvent(type,params);
-      return langx.Emitter.prototype.emit.call(this,e);
+      var e = langx.Emitter.createEvent(type,{
+        data : params
+      });
+      return langx.Emitter.prototype.emit.call(this,e,params);
     },
 
     /**
@@ -16414,7 +16421,7 @@ define('skylark-widgets-iconpicker/IconPicker',[
     };
 
 
-    return skylark.attach("iwidgets.IconPicker",IconPicker);
+    return skylark.attach("widgets.IconPicker",IconPicker);
 });
 
 define('skylark-widgets-iconpicker/main',[

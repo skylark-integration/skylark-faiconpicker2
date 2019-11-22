@@ -766,5 +766,5 @@ define([
     };
 
 
-    return skylark.attach("iwidgets.IconPicker",IconPicker);
+    return skylark.attach("widgets.IconPicker",IconPicker);
 });
