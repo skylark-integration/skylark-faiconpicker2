@@ -1,8 +1,8 @@
 /**
- * skylark-widgets-iconpicker - The skylark icon picker widget
+ * skylark-faiconpicker2 - The skylark icon picker widget
  * @author Hudaokeji, Inc.
  * @version v0.9.0
- * @link https://github.com/skylark-widgets/skylark-widgets-iconpicker/
+ * @link https://github.com/skylark-integration/skylark-faiconpicker2/
  * @license MIT
  */
 (function(factory,globals) {
@@ -75,7 +75,7 @@
   factory(define,require);
 
   if (!isAmd) {
-    var skylarkjs = require("skylark-langx/skylark");
+    var skylarkjs = require("skylark-langx-ns");
 
     if (isCmd) {
       module.exports = skylarkjs;
@@ -86,7 +86,7 @@
 
 })(function(define,require) {
 
-define('skylark-widgets-iconpicker/allIcons',[],function(){
+define('skylark-faiconpicker2/allIcons',[],function(){
 	var icons = [ {
             title: "fab fa-500px",
             searchTerms: []
@@ -4326,7 +4326,7 @@ define('skylark-widgets-iconpicker/allIcons',[],function(){
         } ];
     return icons;
 });
-define('skylark-widgets-iconpicker/IconPicker',[
+define('skylark-faiconpicker2/IconPicker',[
     "skylark-langx/skylark",
     "skylark-langx/langx",
     "skylark-domx-query",
@@ -5094,16 +5094,16 @@ define('skylark-widgets-iconpicker/IconPicker',[
     };
 
 
-    return skylark.attach("widgets.IconPicker",IconPicker);
+    return skylark.attach("domx.IconPicker",IconPicker);
 });
 
-define('skylark-widgets-iconpicker/main',[
+define('skylark-faiconpicker2/main',[
 	"./IconPicker"
 ],function(IconPicker){
 	return IconPicker;
 });
-define('skylark-widgets-iconpicker', ['skylark-widgets-iconpicker/main'], function (main) { return main; });
+define('skylark-faiconpicker2', ['skylark-faiconpicker2/main'], function (main) { return main; });
 
 
 },this);
-//# sourceMappingURL=sourcemaps/skylark-widgets-iconpicker.js.map
+//# sourceMappingURL=sourcemaps/skylark-faiconpicker2.js.map
